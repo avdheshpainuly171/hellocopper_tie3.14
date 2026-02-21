@@ -1,17 +1,323 @@
-<style>
-  body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("https://raw.githubusercontent.com/avdheshpainuly171/hellocopper_tie3.14/master/photo_2026-02-21_23-03-28.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.20;
-  }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday! 🎂</title>
+  <style>
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<!-- Other content of birthday.html remains unchanged -->
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Dark overlay so text stays readable over any background image */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.20);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Music button ── */
+    #music-btn {
+      position: fixed;
+      bottom: 1.4rem;
+      right: 1.4rem;
+      z-index: 10;
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.5);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+    #music-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.1); }
+
+    /* ── Confetti canvas ── */
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Card ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 24px;
+      padding: 3rem 3.5rem;
+      max-width: 560px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7) translateY(40px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ── Cake emoji ── */
+    .cake {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 1rem;
+      animation: bounce 1.5s infinite ease-in-out;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    /* ── Headline ── */
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 800;
+      background: linear-gradient(90deg, #f9d423, #ff4e50, #f9d423);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+      margin-bottom: 0.4rem;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* ── Name ── */
+    .name {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 1.4rem;
+      text-shadow: 0 0 20px rgba(249, 212, 35, 0.6);
+    }
+
+    /* ── Message ── */
+    .message {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 2rem;
+    }
+
+    /* ── Balloon row ── */
+    .balloons {
+      font-size: 2rem;
+      letter-spacing: 0.4rem;
+      animation: sway 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes sway {
+      from { transform: rotate(-4deg); }
+      to   { transform: rotate(4deg); }
+    }
+
+    /* ── Stars ── */
+    .stars {
+      margin-top: 1.6rem;
+      font-size: 1.4rem;
+      letter-spacing: 0.3rem;
+      color: #f9d423;
+    }
+
+    /* ── Fallback ── */
+    .fallback { display: none; }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Background music (src set by CONFIG.songUrl in script) -->
+  <audio id="bg-audio" loop preload="auto"></audio>
+
+  <!-- Floating play/pause button -->
+  <button id="music-btn" title="Play / Pause music" aria-label="Play or pause music">🎵</button>
+
+  <div class="card" id="card">
+    <span class="cake">🎂</span>
+    <h1>Happy Birthday</h1>
+    <p class="name" id="recipient-name">NAINA</p>
+    <p class="message">
+      Wishing you a day filled with joy, laughter, and all the things that
+      make you smile. May this new year of your life bring you endless
+      happiness and wonderful memories. 🎉
+    </p>
+    <div class="balloons">🎈🎈🎈</div>
+    <div class="stars">★ ★ ★ ★ ★</div>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════════════════
+    //  CONFIG — change these values to personalise the page
+    // ══════════════════════════════════════════════════════════════════════════
+    var CONFIG = {
+      // Name shown on the card (overridden by ?name= in the URL if provided)
+      name: 'Naina',
+
+      // Background image URL — set to a full URL or a relative path.
+      // Leave empty ('') to keep the default dark gradient.
+      bgImage: 'photo_2026-02-21_23-03-28.jpg',
+
+      // Song URL — set to a full URL or a relative path to an audio file.
+      // Leave empty ('') to disable music.
+      // Example: 'https://www.example.com/happy-birthday.mp3'
+      songUrl: 'https://www.youtube.com/watch?v=5u4xTa3LR2U&list=RD5u4xTa3LR2U&start_radio=1'
+    };
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Apply background image ───────────────────────────────────────────────
+    if (CONFIG.bgImage) {
+      // Only allow http/https/relative paths; strip anything that could break the CSS url()
+      var bgSafe = CONFIG.bgImage.replace(/['"()]/g, '');
+      document.body.style.backgroundImage = 'url("' + bgSafe + '")';
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundRepeat = 'no-repeat';
+    }
+
+    // ── Read name: URL query param takes priority over CONFIG ────────────────
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var raw = (params.get('name') || CONFIG.name || '').trim();
+      // Sanitize: only keep letters, spaces, hyphens and apostrophes.
+      // Value is set via textContent, so HTML injection is not possible.
+      var safe = raw.replace(/[^A-Za-z\s'\-]/g, '').trim().slice(0, 60);
+      var display = safe || 'Friend';
+      document.getElementById('recipient-name').textContent = display + '!';
+      document.title = 'Happy Birthday, ' + display + '! 🎂';
+    })();
+
+    // ── Background music ─────────────────────────────────────────────────────
+    (function () {
+      var audio = document.getElementById('bg-audio');
+      var btn   = document.getElementById('music-btn');
+      if (!CONFIG.songUrl) {
+        btn.style.display = 'none';
+        return;
+      }
+      audio.src = CONFIG.songUrl;
+
+      function updateBtn(playing) {
+        btn.textContent = playing ? '⏸' : '🎵';
+        btn.title       = playing ? 'Pause music' : 'Play music';
+      }
+
+      // Try autoplay; browsers may block it until a user gesture
+      var autoplayPromise = audio.play();
+      if (autoplayPromise !== undefined) {
+        autoplayPromise.then(function () {
+          updateBtn(true);
+        }).catch(function () {
+          // Autoplay blocked — wait for first click anywhere on the page
+          updateBtn(false);
+          document.addEventListener('click', function startOnClick() {
+            audio.play().then(function () { updateBtn(true); });
+          }, { once: true });
+        });
+      }
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (audio.paused) {
+          audio.play().then(function () { updateBtn(true); });
+        } else {
+          audio.pause();
+          updateBtn(false);
+        }
+      });
+    })();
+
+    // ── Confetti animation ───────────────────────────────────────────────────
+    (function () {
+      var canvas = document.getElementById('confetti-canvas');
+      var ctx    = canvas.getContext('2d');
+      var pieces = [];
+      var colours = ['#f9d423','#ff4e50','#56ccf2','#2f80ed','#b2fefa',
+                     '#00f260','#ffffff','#f093fb'];
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function randomBetween(a, b) { return a + Math.random() * (b - a); }
+
+      // Spawn initial burst
+      for (var i = 0; i < 140; i++) {
+        pieces.push({
+          x:   randomBetween(0, canvas.width),
+          y:   randomBetween(-canvas.height, 0),
+          w:   randomBetween(6, 14),
+          h:   randomBetween(10, 20),
+          colour: colours[Math.floor(Math.random() * colours.length)],
+          vx: randomBetween(-2, 2),
+          vy: randomBetween(2, 6),
+          angle:  randomBetween(0, Math.PI * 2),
+          spin:   randomBetween(-0.08, 0.08),
+          opacity: randomBetween(0.7, 1)
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(function (p) {
+          ctx.save();
+          ctx.globalAlpha = p.opacity;
+          ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+          ctx.rotate(p.angle);
+          ctx.fillStyle = p.colour;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+
+          p.x     += p.vx;
+          p.y     += p.vy;
+          p.angle += p.spin;
+
+          // Reset piece to top when it falls off screen
+          if (p.y > canvas.height + 20) {
+            p.y = -20;
+            p.x = randomBetween(0, canvas.width);
+          }
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+</body>
+</html>
