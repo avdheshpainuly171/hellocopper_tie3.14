@@ -6,33 +6,31 @@
     <title>Birthday Wish</title>
     <style>
         body {
-            background-image: url('./path/to/your/background/image.jpg'); /* Update with your image path */
-            background-size: cover;
+            background-image: url('photo_2026-02-21_23-03-28.jpg');
             background-position: center;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 0;
+            background-size: cover;
         }
         .send-button {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            bottom: 0;
+            left: 0;
+        }
+        .music-control {
+            position: fixed;
+            bottom: 0;
+            right: 0;
         }
     </style>
 </head>
 <body>
-    <script>
-        // Configuration object
-        var CONFIG = {
-            songUrl: './path/to/your/audio/file.mp3' // Update to point to the audio file
-        };
-    </script>
-    <button class="send-button" onclick="window.location.href='mailto:recipient@example.com?subject=Happy Birthday&body=I just wanted to send you my wishes! Here's the link: ' + encodeURIComponent(window.location.href)">Send</button>
+    <h1>Happy Birthday!</h1>
+    <p>Wishing you a fantastic birthday filled with joy and happiness.</p>
+    <button class="send-button" onclick="location.href='mailto:ankeetasati@gmail.com?body=' + encodeURIComponent(window.location.href)">Send Birthday Wish</button>
+    <div class="music-control">
+        <audio controls>
+            <source src="Rang Lageya - Official Video   Paras Chhabra   Mahira Sharma   Mohit Chauhan   Rochak Kohli   Kumaar.m4a" type="audio/m4a">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
 </body>
 </html>
