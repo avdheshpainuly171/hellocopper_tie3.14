@@ -15,10 +15,44 @@
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       overflow: hidden;
       position: relative;
     }
+
+    /* Dark overlay so text stays readable over any background image */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Music button ── */
+    #music-btn {
+      position: fixed;
+      bottom: 1.4rem;
+      right: 1.4rem;
+      z-index: 10;
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.5);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+    #music-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.1); }
 
     /* ── Confetti canvas ── */
     #confetti-canvas {
@@ -126,6 +160,12 @@
 
   <canvas id="confetti-canvas"></canvas>
 
+  <!-- Background music (src set by CONFIG.songUrl in script) -->
+  <audio id="bg-audio" loop preload="auto"></audio>
+
+  <!-- Floating play/pause button -->
+  <button id="music-btn" title="Play / Pause music" aria-label="Play or pause music">🎵</button>
+
   <div class="card" id="card">
     <span class="cake">🎂</span>
     <h1>Happy Birthday</h1>
@@ -140,19 +180,81 @@
   </div>
 
   <script>
-    // ── Read name from query string ──────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════════
+    //  CONFIG — change these values to personalise the page
+    // ══════════════════════════════════════════════════════════════════════════
+    var CONFIG = {
+      // Name shown on the card (overridden by ?name= in the URL if provided)
+      name: 'Friend',
+
+      // Background image URL — set to a full URL or a relative path.
+      // Leave empty ('') to keep the default dark gradient.
+      bgImage: '',
+
+      // Song URL — set to a full URL or a relative path to an audio file.
+      // Leave empty ('') to disable music.
+      // Example: 'https://www.example.com/happy-birthday.mp3'
+      songUrl: ''
+    };
+    // ══════════════════════════════════════════════════════════════════════════
+
+    // ── Apply background image ───────────────────────────────────────────────
+    if (CONFIG.bgImage) {
+      // Only allow http/https/relative paths; strip anything that could break the CSS url()
+      var bgSafe = CONFIG.bgImage.replace(/['"()]/g, '');
+      document.body.style.backgroundImage = 'url(' + bgSafe + ')';
+    }
+
+    // ── Read name: URL query param takes priority over CONFIG ────────────────
     (function () {
       var params = new URLSearchParams(window.location.search);
-      var name = (params.get('name') || '').trim();
-      if (name) {
-        // Sanitize: only keep letters, spaces, hyphens and apostrophes.
-        // Value is set via textContent, so HTML injection is not possible.
-        var safe = name.replace(/[^A-Za-z\s'\-]/g, '').trim().slice(0, 60);
-        if (safe) {
-          document.getElementById('recipient-name').textContent = safe + '!';
-          document.title = 'Happy Birthday, ' + safe + '! 🎂';
-        }
+      var raw = (params.get('name') || CONFIG.name || '').trim();
+      // Sanitize: only keep letters, spaces, hyphens and apostrophes.
+      // Value is set via textContent, so HTML injection is not possible.
+      var safe = raw.replace(/[^A-Za-z\s'\-]/g, '').trim().slice(0, 60);
+      var display = safe || 'Friend';
+      document.getElementById('recipient-name').textContent = display + '!';
+      document.title = 'Happy Birthday, ' + display + '! 🎂';
+    })();
+
+    // ── Background music ─────────────────────────────────────────────────────
+    (function () {
+      var audio = document.getElementById('bg-audio');
+      var btn   = document.getElementById('music-btn');
+      if (!CONFIG.songUrl) {
+        btn.style.display = 'none';
+        return;
       }
+      audio.src = CONFIG.songUrl;
+
+      function updateBtn(playing) {
+        btn.textContent = playing ? '⏸' : '🎵';
+        btn.title       = playing ? 'Pause music' : 'Play music';
+      }
+
+      // Try autoplay; browsers may block it until a user gesture
+      var autoplayPromise = audio.play();
+      if (autoplayPromise !== undefined) {
+        autoplayPromise.then(function () {
+          updateBtn(true);
+        }).catch(function () {
+          // Autoplay blocked — wait for first click anywhere on the page
+          updateBtn(false);
+          document.addEventListener('click', function startOnClick() {
+            audio.play().then(function () { updateBtn(true); });
+          }, { once: true });
+        });
+      }
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (audio.paused) {
+          audio.play().then(function () { updateBtn(true); });
+        } else {
+          audio.pause();
+          updateBtn(false);
+        }
+      });
     })();
 
     // ── Confetti animation ───────────────────────────────────────────────────
