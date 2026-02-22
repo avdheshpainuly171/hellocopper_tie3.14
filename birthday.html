@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Happy Birthday! 🎂</title>
   <style>
-    /* ---------- Reset & Base ---------- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -17,645 +16,437 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 30px 20px 60px;
+      padding: 30px 20px 80px;
       color: #fff;
+      text-align: center;
     }
 
-    /* ---------- Confetti Canvas ---------- */
+    /* ---- Canvas ---- */
     #confetti-canvas {
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
+      pointer-events: none; z-index: 0;
     }
 
-    /* ---------- Floating Balloons ---------- */
-    .balloon-container {
-      position: fixed;
-      bottom: -120px;
-      width: 100%;
-      pointer-events: none;
-      z-index: 1;
-    }
+    /* ---- Stars ---- */
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .star  { position: absolute; background: #fff; border-radius: 50%; animation: twinkle ease-in-out infinite; }
+    @keyframes twinkle { 0%,100%{opacity:.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.5)} }
+
+    /* ---- Balloons ---- */
+    .balloon-container { position: fixed; bottom: -130px; width: 100%; pointer-events: none; z-index: 1; }
     .balloon {
-      position: absolute;
-      bottom: 0;
-      width: 60px;
-      height: 80px;
+      position: absolute; bottom: 0;
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      animation: floatUp linear infinite;
-      opacity: 0.9;
+      animation: floatUp linear infinite; opacity: 0.9;
     }
     .balloon::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1px;
-      height: 20px;
-      background: rgba(255,255,255,0.5);
+      content: ''; position: absolute; bottom: -22px; left: 50%;
+      transform: translateX(-50%); width: 1px; height: 22px;
+      background: rgba(255,255,255,0.6);
     }
     @keyframes floatUp {
-      0%   { transform: translateY(0) rotate(-5deg); opacity: 0.9; }
-      50%  { transform: translateY(-50vh) rotate(5deg); opacity: 0.8; }
-      100% { transform: translateY(-110vh) rotate(-3deg); opacity: 0; }
+      0%   { transform: translateY(0)      rotate(-5deg); opacity:.9 }
+      50%  { transform: translateY(-50vh)  rotate(5deg);  opacity:.7 }
+      100% { transform: translateY(-115vh) rotate(-3deg); opacity:0  }
     }
 
-    /* ---------- Stars ---------- */
-    .stars {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .star {
-      position: absolute;
-      background: #fff;
-      border-radius: 50%;
-      animation: twinkle ease-in-out infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; transform: scale(1); }
-      50%       { opacity: 1;   transform: scale(1.4); }
-    }
-
-    /* ---------- Content Wrapper ---------- */
+    /* ---- Content ---- */
     .content {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 28px;
-      width: 100%;
-      max-width: 560px;
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; gap: 30px;
+      width: 100%; max-width: 560px;
     }
 
-    /* ---------- Title ---------- */
+    /* ---- Title ---- */
     .title {
-      font-size: clamp(2rem, 7vw, 3.5rem);
-      font-weight: 900;
-      background: linear-gradient(90deg, #ff6fd8, #ffd700, #ff6fd8);
-      background-size: 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: clamp(2rem, 8vw, 3.8rem); font-weight: 900;
+      background: linear-gradient(90deg, #ff6fd8, #ffd700, #ff9f43, #ff6fd8);
+      background-size: 300%; -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
       animation: shimmer 3s linear infinite;
-      text-shadow: none;
-      letter-spacing: 1px;
     }
-    @keyframes shimmer {
-      0%   { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
-    }
+    @keyframes shimmer { 0%{background-position:0%} 100%{background-position:300%} }
 
-    /* ---------- Gift Box ---------- */
-    .gift-wrapper {
-      cursor: pointer;
-      position: relative;
-      width: 160px;
-      height: 200px;
-      transition: transform 0.2s;
-      user-select: none;
+    /* ---- GIFT BOX ---- */
+    .gift-scene {
+      cursor: pointer; user-select: none;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0;
     }
-    .gift-wrapper:hover { transform: scale(1.07) rotate(-2deg); }
-    .gift-wrapper:active { transform: scale(0.97); }
-
-    .gift-box {
-      width: 160px;
-      height: 130px;
-      background: linear-gradient(135deg, #e63946, #c1121f);
-      border-radius: 10px;
-      position: absolute;
-      bottom: 0;
-      box-shadow: 0 8px 32px rgba(230,57,70,0.5), inset 0 2px 8px rgba(255,255,255,0.15);
-    }
-    .gift-box::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      transform: translateY(-50%);
-      width: 100%;
-      height: 22px;
-      background: linear-gradient(90deg, #ffd700, #ffaa00);
-      border-radius: 4px;
-    }
-    .gift-box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 22px;
-      height: 100%;
-      background: linear-gradient(180deg, #ffd700, #ffaa00);
-      border-radius: 4px;
-      z-index: 1;
-    }
+    .gift-scene:hover .gift-body { transform: scale(1.05); }
+    .gift-scene:active .gift-body { transform: scale(0.97); }
 
     /* Lid */
     .gift-lid {
-      width: 175px;
-      height: 45px;
+      width: 180px; height: 48px;
       background: linear-gradient(135deg, #ff6b6b, #ee1d52);
-      border-radius: 8px;
-      position: absolute;
-      top: 58px;
-      left: -8px;
-      box-shadow: 0 4px 18px rgba(238,29,82,0.4), inset 0 2px 6px rgba(255,255,255,0.15);
-      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s;
+      border-radius: 8px 8px 0 0;
+      position: relative;
+      box-shadow: 0 -4px 20px rgba(238,29,82,.5), inset 0 2px 6px rgba(255,255,255,.2);
+      transition: transform .55s cubic-bezier(.34,1.56,.64,1), opacity .55s;
       transform-origin: bottom center;
     }
     .gift-lid::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      transform: translateY(-50%);
-      width: 100%;
-      height: 20px;
-      background: linear-gradient(90deg, #ffd700, #ffaa00);
-      border-radius: 4px;
-    }
-    .gift-wrapper.opened .gift-lid {
-      transform: translateY(-80px) rotate(-20deg);
-      opacity: 0;
+      content: ''; position: absolute; top: 50%; left: 0;
+      transform: translateY(-50%); width: 100%; height: 20px;
+      background: linear-gradient(90deg, #ffd700, #ffaa00); border-radius: 3px;
     }
 
-    /* Bow */
+    /* Bow on lid */
     .bow {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 44px;
-      z-index: 5;
-      transition: transform 0.5s, opacity 0.5s;
+      position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
+      width: 86px; height: 48px; z-index: 6;
+      transition: transform .55s, opacity .55s;
     }
-    .bow-left, .bow-right {
-      position: absolute;
-      width: 36px;
-      height: 28px;
+    .bow-l, .bow-r {
+      position: absolute; width: 38px; height: 30px;
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      background: linear-gradient(135deg, #ff9ff3, #f368e0);
-      top: 0;
+      background: linear-gradient(135deg, #ff9ff3, #f368e0); top: 0;
     }
-    .bow-left  { left: 2px;  transform: rotate(-30deg); }
-    .bow-right { right: 2px; transform: rotate(30deg); }
-    .bow-center {
-      position: absolute;
-      width: 16px; height: 16px;
-      background: #ff6fd8;
-      border-radius: 50%;
-      top: 4px; left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 0 8px #ff6fd8;
-    }
-    .gift-wrapper.opened .bow {
-      transform: translateX(-50%) translateY(-90px) scale(0.5);
-      opacity: 0;
+    .bow-l { left: 2px;  transform: rotate(-30deg); }
+    .bow-r { right: 2px; transform: rotate(30deg);  }
+    .bow-c {
+      position: absolute; width: 18px; height: 18px; background: #ff6fd8;
+      border-radius: 50%; top: 4px; left: 50%; transform: translateX(-50%);
+      box-shadow: 0 0 10px #ff6fd8;
     }
 
-    /* Sparkles burst on open */
+    /* Body */
+    .gift-body {
+      width: 170px; height: 136px;
+      background: linear-gradient(135deg, #e63946, #b5182a);
+      border-radius: 0 0 10px 10px;
+      position: relative;
+      box-shadow: 0 10px 36px rgba(230,57,70,.55), inset 0 2px 8px rgba(255,255,255,.15);
+      transition: transform .2s;
+    }
+    .gift-body::after {  /* horizontal ribbon */
+      content: ''; position: absolute; top: 50%; left: 0;
+      transform: translateY(-50%); width: 100%; height: 24px;
+      background: linear-gradient(90deg, #ffd700, #ffaa00); border-radius: 4px;
+    }
+    .gift-body::before { /* vertical ribbon */
+      content: ''; position: absolute; top: 0; left: 50%;
+      transform: translateX(-50%); width: 24px; height: 100%;
+      background: linear-gradient(180deg, #ffd700, #ffaa00); border-radius: 4px; z-index: 1;
+    }
+
+    /* Opened state */
+    .gift-scene.opened .gift-lid {
+      transform: translateY(-90px) rotate(-22deg); opacity: 0;
+    }
+    .gift-scene.opened .bow {
+      transform: translateX(-50%) translateY(-110px) scale(.4); opacity: 0;
+    }
+
+    /* Sparkles */
     .sparkle {
-      position: absolute;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      pointer-events: none;
-      opacity: 0;
+      position: absolute; border-radius: 50%;
+      pointer-events: none; opacity: 0; width: 12px; height: 12px;
     }
-    .gift-wrapper.opened .sparkle {
-      animation: burst 0.7s ease-out forwards;
-    }
+    .gift-scene.opened .sparkle { animation: burst .75s ease-out forwards; }
     @keyframes burst {
-      0%   { opacity: 1; transform: translate(0,0) scale(1); }
-      100% { opacity: 0; transform: var(--tx) scale(0.2); }
+      0%  { opacity: 1; transform: translate(0,0) scale(1); }
+      100%{ opacity: 0; transform: var(--tx) scale(.1); }
     }
 
-    /* ---------- Gift Hint ---------- */
-    .gift-hint {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.7);
-      letter-spacing: 0.5px;
+    /* Hint */
+    .hint {
+      font-size: .95rem; color: rgba(255,255,255,.75);
       animation: pulse 2s ease-in-out infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; } 50% { opacity: 1; }
-    }
+    @keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
 
-    /* ---------- Music Button ---------- */
+    /* ---- Music Button ---- */
     .music-btn {
       background: linear-gradient(135deg, #f368e0, #a29bfe);
-      border: none;
-      border-radius: 50px;
-      padding: 14px 36px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #fff;
-      cursor: pointer;
-      box-shadow: 0 4px 24px rgba(243,104,224,0.45);
-      transition: transform 0.18s, box-shadow 0.18s;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      border: none; border-radius: 50px; padding: 15px 40px;
+      font-size: 1.1rem; font-weight: 700; color: #fff; cursor: pointer;
+      box-shadow: 0 4px 24px rgba(243,104,224,.45);
+      transition: transform .18s, box-shadow .18s;
+      display: inline-flex; align-items: center; gap: 10px;
     }
-    .music-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 32px rgba(243,104,224,0.6);
-    }
-    .music-btn:active { transform: translateY(0); }
-    .music-btn .note { font-size: 1.4rem; animation: noteWave 1s ease-in-out infinite; }
-    @keyframes noteWave {
-      0%, 100% { transform: rotate(-10deg); }
-      50%       { transform: rotate(10deg); }
-    }
+    .music-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(243,104,224,.6); }
+    .music-btn:active{ transform: translateY(0); }
+    .note-icon { font-size: 1.4rem; animation: wave 1s ease-in-out infinite; display: inline-block; }
+    @keyframes wave { 0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(12deg)} }
 
-    /* ---------- Wish Card ---------- */
-    .wish-card {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.18);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 32px 28px;
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      animation: fadeInUp 1s ease both;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .wish-card h2 {
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      background: linear-gradient(90deg, #ffd700, #ff6fd8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 14px;
-    }
-    .wish-card p {
-      font-size: 1.05rem;
-      line-height: 1.8;
-      color: rgba(255,255,255,0.88);
-    }
-    .emoji-row {
-      font-size: 1.8rem;
-      margin-top: 16px;
-      letter-spacing: 6px;
-      animation: sway 2s ease-in-out infinite;
-    }
-    @keyframes sway {
-      0%, 100% { letter-spacing: 6px; }
-      50%       { letter-spacing: 10px; }
-    }
-
-    /* ---------- Now Playing Badge ---------- */
+    /* ---- Now Playing ---- */
     .now-playing {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      color: #ffd700;
-      background: rgba(255,215,0,0.12);
-      border: 1px solid rgba(255,215,0,0.3);
-      border-radius: 30px;
-      padding: 6px 18px;
+      display: none; align-items: center; gap: 10px;
+      color: #ffd700; font-size: .9rem;
+      background: rgba(255,215,0,.1); border: 1px solid rgba(255,215,0,.35);
+      border-radius: 30px; padding: 7px 20px;
     }
-    .now-playing.visible { display: flex; }
-    .bar-eq {
-      display: flex;
-      gap: 3px;
-      align-items: flex-end;
-      height: 18px;
-    }
-    .bar-eq span {
-      display: block;
-      width: 4px;
-      background: #ffd700;
-      border-radius: 2px;
+    .now-playing.show { display: flex; }
+    .eq { display: flex; gap: 3px; align-items: flex-end; height: 20px; }
+    .eq span {
+      display: block; width: 4px; background: #ffd700; border-radius: 2px;
       animation: eq linear infinite;
     }
-    .bar-eq span:nth-child(1) { height: 6px;  animation-duration: 0.5s; }
-    .bar-eq span:nth-child(2) { height: 14px; animation-duration: 0.7s; }
-    .bar-eq span:nth-child(3) { height: 10px; animation-duration: 0.6s; }
-    .bar-eq span:nth-child(4) { height: 16px; animation-duration: 0.8s; }
-    @keyframes eq {
-      0%, 100% { transform: scaleY(1); }
-      50%       { transform: scaleY(0.3); }
-    }
+    .eq span:nth-child(1){height:6px;animation-duration:.5s}
+    .eq span:nth-child(2){height:14px;animation-duration:.7s}
+    .eq span:nth-child(3){height:10px;animation-duration:.55s}
+    .eq span:nth-child(4){height:16px;animation-duration:.8s}
+    @keyframes eq { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.25)} }
 
-    /* ---------- Cake ---------- */
-    .cake-wrapper {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      animation: bounce 2s ease-in-out infinite;
+    /* ---- Cake ---- */
+    .cake-box {
+      animation: bob 2.2s ease-in-out infinite;
+      filter: drop-shadow(0 6px 18px rgba(243,104,224,.45));
     }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-10px); }
+    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+    /* ---- Wish Card ---- */
+    .card {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(14px);
+      border-radius: 22px; padding: 34px 30px;
+      box-shadow: 0 8px 36px rgba(0,0,0,.35);
+      animation: rise 1.2s ease both;
     }
-    .cake-svg { width: 120px; height: 120px; }
+    @keyframes rise { from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:translateY(0)} }
+    .card h2 {
+      font-size: clamp(1.3rem,4vw,1.9rem);
+      background: linear-gradient(90deg,#ffd700,#ff6fd8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 14px;
+    }
+    .card p { font-size: 1.05rem; line-height: 1.85; color: rgba(255,255,255,.88); }
+    .emojis { font-size: 1.9rem; margin-top: 16px; letter-spacing: 8px; animation: spread 2s ease-in-out infinite; }
+    @keyframes spread { 0%,100%{letter-spacing:8px} 50%{letter-spacing:13px} }
   </style>
 </head>
 <body>
 
-<!-- Stars background -->
 <div class="stars" id="stars"></div>
-<!-- Confetti -->
 <canvas id="confetti-canvas"></canvas>
-<!-- Balloons -->
 <div class="balloon-container" id="balloons"></div>
-
-<!-- Hidden audio (uses a public domain birthday MIDI via web audio API) -->
-<audio id="birthday-audio" loop>
-  <!-- We'll generate the melody via Web Audio API as no file is hosted -->
-</audio>
 
 <div class="content">
 
-  <!-- Title -->
   <h1 class="title">🎉 Happy Birthday! 🎉</h1>
 
-  <!-- Cake -->
-  <div class="cake-wrapper">
-    <svg class="cake-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Candles -->
-      <rect x="30" y="22" width="8" height="22" rx="3" fill="#f8d7da"/>
-      <rect x="56" y="14" width="8" height="28" rx="3" fill="#cfe2ff"/>
-      <rect x="82" y="22" width="8" height="22" rx="3" fill="#d1e7dd"/>
-      <!-- Flames -->
-      <ellipse cx="34" cy="18" rx="5" ry="7" fill="#ffd700" opacity="0.9">
-        <animate attributeName="ry" values="7;5;7" dur="0.6s" repeatCount="indefinite"/>
+  <!-- Animated Cake (SVG) -->
+  <div class="cake-box">
+    <svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- candles -->
+      <rect x="33" y="22" width="9" height="24" rx="3" fill="#f8d7da"/>
+      <rect x="60" y="13" width="9" height="30" rx="3" fill="#cfe2ff"/>
+      <rect x="88" y="22" width="9" height="24" rx="3" fill="#d1e7dd"/>
+      <!-- flames -->
+      <ellipse cx="37" cy="17" rx="5.5" ry="8" fill="#ffd700" opacity=".9">
+        <animate attributeName="ry" values="8;5;8" dur=".6s" repeatCount="indefinite"/>
+        <animate attributeName="fill" values="#ffd700;#ff9f43;#ffd700" dur=".6s" repeatCount="indefinite"/>
       </ellipse>
-      <ellipse cx="60" cy="10" rx="5" ry="7" fill="#ff9f43" opacity="0.9">
-        <animate attributeName="ry" values="7;4;7" dur="0.8s" repeatCount="indefinite"/>
+      <ellipse cx="64" cy="9" rx="5.5" ry="8" fill="#ff9f43" opacity=".9">
+        <animate attributeName="ry" values="8;4;8" dur=".8s" repeatCount="indefinite"/>
+        <animate attributeName="fill" values="#ff9f43;#ffd700;#ff9f43" dur=".8s" repeatCount="indefinite"/>
       </ellipse>
-      <ellipse cx="86" cy="18" rx="5" ry="7" fill="#ffd700" opacity="0.9">
-        <animate attributeName="ry" values="7;5;7" dur="0.7s" repeatCount="indefinite"/>
+      <ellipse cx="92" cy="17" rx="5.5" ry="8" fill="#ffd700" opacity=".9">
+        <animate attributeName="ry" values="8;5;8" dur=".7s" repeatCount="indefinite"/>
+        <animate attributeName="fill" values="#ffd700;#ff6b6b;#ffd700" dur=".7s" repeatCount="indefinite"/>
       </ellipse>
-      <!-- Cake layers -->
-      <rect x="12" y="44" width="96" height="34" rx="6" fill="#f368e0"/>
-      <rect x="12" y="44" width="96" height="12" rx="6" fill="#ff9ff3"/>
-      <!-- Frosting drips -->
-      <path d="M12 56 Q20 68 30 56 Q40 68 50 56 Q60 68 70 56 Q80 68 90 56 Q100 68 108 56 L108 78 Q100 74 90 78 Q80 74 70 78 Q60 74 50 78 Q40 74 30 78 Q20 74 12 78 Z" fill="#ff6fd8" opacity="0.6"/>
-      <rect x="20" y="78" width="80" height="28" rx="6" fill="#e63946"/>
-      <rect x="20" y="78" width="80" height="10" rx="6" fill="#ff6b6b"/>
-      <!-- Decorations -->
-      <circle cx="40" cy="68" r="5" fill="#ffd700"/>
-      <circle cx="60" cy="64" r="5" fill="#fff"/>
-      <circle cx="80" cy="68" r="5" fill="#ffd700"/>
-      <circle cx="50" cy="88" r="4" fill="#fff" opacity="0.7"/>
-      <circle cx="70" cy="88" r="4" fill="#ffd700" opacity="0.8"/>
+      <!-- top layer -->
+      <rect x="14" y="46" width="102" height="36" rx="7" fill="#f368e0"/>
+      <rect x="14" y="46" width="102" height="13" rx="7" fill="#ff9ff3"/>
+      <!-- frosting drips -->
+      <path d="M14 59 Q22 72 33 59 Q44 72 55 59 Q66 72 77 59 Q88 72 99 59 Q110 72 116 59 L116 82 Q99 78 77 82 Q55 78 33 82 Q14 78 14 82 Z" fill="#ff6fd8" opacity=".6"/>
+      <!-- bottom layer -->
+      <rect x="22" y="82" width="86" height="30" rx="7" fill="#e63946"/>
+      <rect x="22" y="82" width="86" height="11" rx="7" fill="#ff6b6b"/>
+      <!-- decorations -->
+      <circle cx="43" cy="71" r="5" fill="#ffd700"/>
+      <circle cx="65" cy="67" r="5" fill="#fff"/>
+      <circle cx="87" cy="71" r="5" fill="#ffd700"/>
+      <circle cx="54" cy="92" r="4" fill="#fff" opacity=".7"/>
+      <circle cx="76" cy="92" r="4" fill="#ffd700" opacity=".85"/>
     </svg>
   </div>
 
   <!-- Gift Box -->
-  <div class="gift-wrapper" id="giftBox" onclick="openGift()" title="Click to open your gift!">
-    <!-- Sparkles -->
-    <div class="sparkle" style="top:50%;left:50%;background:#ffd700;--tx:translate(-70px,-70px)"></div>
-    <div class="sparkle" style="top:50%;left:50%;background:#ff6fd8;--tx:translate(70px,-70px)"></div>
-    <div class="sparkle" style="top:50%;left:50%;background:#a29bfe;--tx:translate(-60px,50px)"></div>
-    <div class="sparkle" style="top:50%;left:50%;background:#55efc4;--tx:translate(60px,50px)"></div>
-    <div class="sparkle" style="top:50%;left:50%;background:#ffd700;--tx:translate(0,-90px)"></div>
-    <!-- Bow -->
-    <div class="bow">
-      <div class="bow-left"></div>
-      <div class="bow-right"></div>
-      <div class="bow-center"></div>
+  <div class="gift-scene" id="giftScene" onclick="openGift()">
+    <!-- sparkle dots (positioned by JS) -->
+    <div class="sparkle" style="top:40%;left:50%;background:#ffd700;--tx:translate(-80px,-80px)"></div>
+    <div class="sparkle" style="top:40%;left:50%;background:#ff6fd8;--tx:translate(80px,-80px)"></div>
+    <div class="sparkle" style="top:40%;left:50%;background:#a29bfe;--tx:translate(-65px,55px)"></div>
+    <div class="sparkle" style="top:40%;left:50%;background:#55efc4;--tx:translate(65px,55px)"></div>
+    <div class="sparkle" style="top:40%;left:50%;background:#fdcb6e;--tx:translate(0,-100px)"></div>
+    <div class="sparkle" style="top:40%;left:50%;background:#74b9ff;--tx:translate(-100px,0px)"></div>
+    <div class="sparkle" style="top:40%;left:50%;background:#fd79a8;--tx:translate(100px,0px)"></div>
+    <!-- lid + bow -->
+    <div class="gift-lid" style="position:relative;">
+      <div class="bow">
+        <div class="bow-l"></div><div class="bow-r"></div><div class="bow-c"></div>
+      </div>
     </div>
-    <!-- Lid -->
-    <div class="gift-lid"></div>
-    <!-- Box -->
-    <div class="gift-box"></div>
+    <!-- body -->
+    <div class="gift-body"></div>
   </div>
 
-  <p class="gift-hint" id="giftHint">🎁 Click the gift to open it!</p>
+  <p class="hint" id="hint">🎁 Click the gift to open it!</p>
 
   <!-- Music Button -->
   <button class="music-btn" id="musicBtn" onclick="toggleMusic()">
-    <span class="note">🎵</span> Play Birthday Song
+    <span class="note-icon">🎵</span> Play Birthday Song
   </button>
 
-  <!-- Now Playing Badge -->
+  <!-- Now Playing -->
   <div class="now-playing" id="nowPlaying">
-    <div class="bar-eq"><span></span><span></span><span></span><span></span></div>
-    Now Playing: Birthday Song 🎂
+    <div class="eq"><span></span><span></span><span></span><span></span></div>
+    Now Playing · Happy Birthday 🎂
   </div>
 
   <!-- Wish Card -->
-  <div class="wish-card">
+  <div class="card">
     <h2>🌟 A Special Wish For You 🌟</h2>
     <p>
-      May this birthday bring you endless smiles,<br/>
-      laughter that echoes through the miles.<br/>
-      May your dreams bloom like flowers in spring,<br/>
-      and your heart dance to every beautiful thing.<br/><br/>
-      <strong>Happy Birthday! 🎂</strong><br/>
-      Wishing you a day filled with love, joy, and happiness!
+      May this birthday bring you endless smiles,<br>
+      laughter that echoes through the miles.<br>
+      May your dreams bloom like flowers in spring,<br>
+      and your heart dance to every beautiful thing.<br><br>
+      <strong>Happy Birthday! 🎂</strong><br>
+      Wishing you a day filled with love, joy &amp; happiness!
     </p>
-    <div class="emoji-row">🎈 🎁 🎂 🍰 🥳</div>
+    <div class="emojis">🎈 🎁 🎂 🍰 🥳</div>
   </div>
 
-</div>
-
-<!-- Balloon Container (populated by JS) -->
+</div><!-- /content -->
 
 <script>
-  /* ============================================================
-     STARS
-  ============================================================ */
-  (function createStars() {
-    const container = document.getElementById('stars');
-    for (let i = 0; i < 80; i++) {
-      const s = document.createElement('div');
-      s.className = 'star';
-      const size = Math.random() * 3 + 1;
-      s.style.cssText = `
-        width:${size}px; height:${size}px;
-        top:${Math.random()*100}vh; left:${Math.random()*100}vw;
-        animation-duration:${Math.random()*3+1.5}s;
-        animation-delay:${Math.random()*3}s;
-      `;
-      container.appendChild(s);
-    }
-  })();
+/* ===================== STARS ===================== */
+(function(){
+  const c = document.getElementById('stars');
+  for(let i=0;i<90;i++){ 
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random()*3+1;
+    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}vh;left:${Math.random()*100}vw;animation-duration:${Math.random()*3+1.5}s;animation-delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+})();
 
-  /* ============================================================
-     BALLOONS
-  ============================================================ */
-  const balloonColors = [
-    '#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fd79a8','#fdcb6e'
-  ];
-  (function createBalloons() {
-    const container = document.getElementById('balloons');
-    for (let i = 0; i < 12; i++) {
-      const b = document.createElement('div');
-      b.className = 'balloon';
-      const color = balloonColors[i % balloonColors.length];
-      const delay = Math.random() * 8;
-      const duration = 6 + Math.random() * 6;
-      b.style.cssText = `
-        left:${Math.random()*95}%;
-        background:${color};
-        animation-duration:${duration}s;
-        animation-delay:${delay}s;
-        width:${50+Math.random()*30}px;
-        height:${65+Math.random()*30}px;
-        box-shadow:0 0 12px ${color}88;
-      `;
-      container.appendChild(b);
-    }
-  })();
+/* ===================== BALLOONS ===================== */
+(function(){
+  const COLORS=['#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fd79a8','#fdcb6e'];
+  const c = document.getElementById('balloons');
+  for(let i=0;i<14;i++){
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    const col = COLORS[i%COLORS.length];
+    const w = 50+Math.random()*30, h = 65+Math.random()*32;
+    b.style.cssText = `left:${Math.random()*94}%;background:${col};width:${w}px;height:${h}px;animation-duration:${7+Math.random()*7}s;animation-delay:${Math.random()*9}s;box-shadow:0 0 14px ${col}99`;
+    c.appendChild(b);
+  }
+})();
 
-  /* ============================================================
-     CONFETTI
-  ============================================================ */
-  const canvas = document.getElementById('confetti-canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-  window.addEventListener('resize', () => {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+/* ===================== CONFETTI ===================== */
+const cv = document.getElementById('confetti-canvas');
+const cx = cv.getContext('2d');
+function resizeCanvas(){ cv.width=window.innerWidth; cv.height=window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const CCOLS=['#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fdcb6e','#fd79a8'];
+const pieces = Array.from({length:90},()=>({
+  x:Math.random()*window.innerWidth,
+  y:Math.random()*window.innerHeight - window.innerHeight,
+  r:Math.random()*8+3,
+  d:Math.random()*90+10,
+  col:CCOLS[Math.floor(Math.random()*CCOLS.length)],
+  ta:0, ts:Math.random()*.12+.04
+}));
+let ang=0;
+function drawConfetti(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  ang+=.01;
+  pieces.forEach(p=>{
+    p.ta+=p.ts;
+    p.y+=(Math.cos(ang+p.d)+1.6);
+    p.x+=Math.sin(ang)*.9;
+    if(p.y>cv.height+10){ p.y=-10; p.x=Math.random()*cv.width; }
+    cx.beginPath();
+    cx.lineWidth=p.r;
+    cx.strokeStyle=p.col;
+    const tilt=Math.sin(p.ta)*13;
+    cx.moveTo(p.x+tilt+p.r/2, p.y);
+    cx.lineTo(p.x+tilt, p.y+tilt+p.r);
+    cx.stroke();
   });
+  requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
 
-  const confettiColors = ['#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fdcb6e'];
-  const pieces = Array.from({length: 80}, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height - canvas.height,
-    r: Math.random() * 7 + 4,
-    d: Math.random() * 80 + 20,
-    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-    tilt: Math.random() * 10 - 10,
-    tiltAngle: 0,
-    tiltSpeed: Math.random() * 0.1 + 0.05
-  }));
+/* ===================== GIFT OPEN ===================== */
+let opened = false;
+function openGift(){
+  if(opened) return;
+  opened = true;
+  document.getElementById('giftScene').classList.add('opened');
+  document.getElementById('hint').textContent = '🎶 Music is playing! Click the button to pause.';
+  startMusic();
+}
 
-  let angle = 0;
-  function drawConfetti() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    angle += 0.01;
-    pieces.forEach(p => {
-      p.tiltAngle += p.tiltSpeed;
-      p.y += (Math.cos(angle + p.d) + 1.5);
-      p.x += Math.sin(angle) * 0.8;
-      p.tilt = Math.sin(p.tiltAngle) * 12;
-      if (p.y > canvas.height + 10) {
-        p.y = -10; p.x = Math.random() * canvas.width;
-      }
-      ctx.beginPath();
-      ctx.lineWidth = p.r;
-      ctx.strokeStyle = p.color;
-      ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
-      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
-      ctx.stroke();
-    });
-    requestAnimationFrame(drawConfetti);
+/* ===================== MUSIC (Web Audio API) ===================== */
+let actx=null, playing=false, nodes=[], loopTimer=null;
+const BPM=108, BEAT=60/BPM;
+// Happy Birthday To You — [freq_hz, beats]
+const MELODY=[
+  [392,.75],[392,.25],[440,1],[392,1],[523,1],[494,2],
+  [392,.75],[392,.25],[440,1],[392,1],[587,1],[523,2],
+  [392,.75],[392,.25],[784,1],[659,1],[523,1],[494,1],[440,2],
+  [698,.75],[698,.25],[659,1],[523,1],[587,1],[523,2]
+];
+
+function playNote(freq, t, dur){
+  if(!freq) return;
+  const o=actx.createOscillator(), g=actx.createGain();
+  o.connect(g); g.connect(actx.destination);
+  o.type='triangle';
+  o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(.28,t+.025);
+  g.gain.setValueAtTime(.28,t+dur*BEAT-.06);
+  g.gain.linearRampToValueAtTime(0,t+dur*BEAT);
+  o.start(t); o.stop(t+dur*BEAT+.02);
+  nodes.push(o);
+}
+
+function scheduleSong(start){
+  let t=start;
+  MELODY.forEach(([f,d])=>{ playNote(f,t,d); t+=d*BEAT; });
+  return t-start;
+}
+
+function startMusic(){
+  if(playing) return;
+  if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended') actx.resume();
+  playing=true;
+  document.getElementById('musicBtn').innerHTML='<span class="note-icon">🎵</span> Pause Song';
+  document.getElementById('nowPlaying').classList.add('show');
+  function loop(){
+    if(!playing) return;
+    const dur=scheduleSong(actx.currentTime+.05);
+    loopTimer=setTimeout(loop,(dur+.35)*1000);
   }
-  drawConfetti();
+  loop();
+}
 
-  /* ============================================================
-     GIFT OPEN
-  ============================================================ */
-  let giftOpened = false;
-  function openGift() {
-    if (giftOpened) return;
-    giftOpened = true;
-    document.getElementById('giftBox').classList.add('opened');
-    document.getElementById('giftHint').textContent = '🎶 Click the button below to play music!';
-    // Auto-play music on gift open
-    startMusic();
-  }
+function stopMusic(){
+  playing=false;
+  clearTimeout(loopTimer);
+  nodes.forEach(n=>{ try{n.stop();}catch(e){} });
+  nodes=[];
+  document.getElementById('musicBtn').innerHTML='<span class="note-icon">🎵</span> Play Birthday Song';
+  document.getElementById('nowPlaying').classList.remove('show');
+}
 
-  /* ============================================================
-     BIRTHDAY MUSIC (Web Audio API — Happy Birthday melody)
-  ============================================================ */
-  let audioCtx = null;
-  let musicPlaying = false;
-  let musicNodes = [];
-  let musicTimeout = null;
-
-  // Happy Birthday To You — note frequencies & durations
-  // Format: [frequency_hz, duration_beats]  (0 = rest)
-  const BPM = 110;
-  const BEAT = 60 / BPM; // seconds per beat
-
-  const notes = [
-    // "Happy Birthday to you"
-    [392,0.75],[392,0.25],[440,1],[392,1],[523,1],[494,2],
-    // "Happy Birthday to you"
-    [392,0.75],[392,0.25],[440,1],[392,1],[587,1],[523,2],
-    // "Happy Birthday dear [name]"
-    [392,0.75],[392,0.25],[784,1],[659,1],[523,1],[494,1],[440,2],
-    // "Happy Birthday to you"
-    [698,0.75],[698,0.25],[659,1],[523,1],[587,1],[523,2]
-  ];
-
-  function playNote(ctx, freq, startTime, duration) {
-    if (freq === 0) return;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(freq, startTime);
-    gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(0.28, startTime + 0.02);
-    gain.gain.setValueAtTime(0.28, startTime + duration * BEAT - 0.05);
-    gain.gain.linearRampToValueAtTime(0, startTime + duration * BEAT);
-    osc.start(startTime);
-    osc.stop(startTime + duration * BEAT + 0.01);
-    musicNodes.push(osc);
-    return osc;
-  }
-
-  function scheduleMelody(ctx, startTime) {
-    let t = startTime;
-    notes.forEach(([freq, dur]) => {
-      playNote(ctx, freq, t, dur);
-      t += dur * BEAT;
-    });
-    return t - startTime; // total duration
-  }
-
-  function startMusic() {
-    if (musicPlaying) return;
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    musicPlaying = true;
-
-    const btn = document.getElementById('musicBtn');
-    btn.innerHTML = '<span class="note">🎵</span> Pause Birthday Song';
-    document.getElementById('nowPlaying').classList.add('visible');
-
-    function playLoop() {
-      if (!musicPlaying) return;
-      const totalDur = scheduleMelody(audioCtx, audioCtx.currentTime + 0.05);
-      musicTimeout = setTimeout(playLoop, (totalDur + 0.3) * 1000);
-    }
-    playLoop();
-  }
-
-  function stopMusic() {
-    musicPlaying = false;
-    clearTimeout(musicTimeout);
-    musicNodes.forEach(n => { try { n.stop(); } catch(e){} });
-    musicNodes = [];
-    const btn = document.getElementById('musicBtn');
-    btn.innerHTML = '<span class="note">🎵</span> Play Birthday Song';
-    document.getElementById('nowPlaying').classList.remove('visible');
-  }
-
-  function toggleMusic() {
-    if (musicPlaying) { stopMusic(); } else { startMusic(); }
-  }
+function toggleMusic(){
+  playing ? stopMusic() : startMusic();
+}
 </script>
 </body>
 </html>
