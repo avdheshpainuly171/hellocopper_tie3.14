@@ -3,200 +3,320 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Happy Birthday!</title>
+<title>Happy Birthday! 🎂</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── BACKGROUND: photo centred, face aligned ── */
 body{
   font-family:'Segoe UI',Arial,sans-serif;
   min-height:100vh;
   overflow-x:hidden;
   color:#fff;
   text-align:center;
-  background-color:#0d0221;
+  /* photo as background, face centred */
   background-image:
-    radial-gradient(ellipse 500px 300px at 10% 15%,rgba(255,100,200,.35) 0%,transparent 65%),
-    radial-gradient(ellipse 400px 400px at 90% 10%,rgba(150,130,255,.38) 0%,transparent 65%),
-    radial-gradient(ellipse 350px 250px at 55% 50%,rgba(255,210,0,.22) 0%,transparent 65%),
-    radial-gradient(ellipse 420px 280px at 5%  85%,rgba(60,220,180,.26) 0%,transparent 65%),
-    radial-gradient(ellipse 380px 380px at 95% 80%,rgba(255,100,150,.28) 0%,transparent 65%),
-    radial-gradient(ellipse 250px 200px at 45% 95%,rgba(100,170,255,.24) 0%,transparent 65%),
-    radial-gradient(ellipse 180px 140px at 70% 30%,rgba(255,180,80,.20) 0%,transparent 65%),
-    radial-gradient(circle 1px at 1px 1px,rgba(255,255,255,.4) 100%,transparent),
-    linear-gradient(155deg,#0a011e 0%,#1c0440 35%,#380660 65%,#0a011e 100%);
-  background-size:100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,22px 22px,100% 100%;
+    linear-gradient(rgba(10,1,30,.55),rgba(10,1,30,.55)),
+    url('photo_2026-02-21_23-03-28.jpg');
+  background-size:cover;
+  background-position:center top;   /* keeps face in view */
   background-attachment:fixed;
+  background-repeat:no-repeat;
 }
+
+/* ── fixed layers ── */
 canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 #bl{position:fixed;bottom:-150px;width:100%;pointer-events:none;z-index:2}
 .bn{position:absolute;bottom:0;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:fu linear infinite;opacity:.9}
 .bn::after{content:'';position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:1px;height:22px;background:rgba(255,255,255,.5)}
-@keyframes fu{0%{transform:translateY(0) rotate(-7deg);opacity:.9}50%{transform:translateY(-55vh) rotate(7deg);opacity:.65}100%{transform:translateY(-125vh) rotate(-4deg);opacity:0}}
+@keyframes fu{
+  0%  {transform:translateY(0) rotate(-7deg);opacity:.9}
+  50% {transform:translateY(-55vh) rotate(7deg);opacity:.65}
+  100%{transform:translateY(-125vh) rotate(-4deg);opacity:0}
+}
 #sr{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .s{position:absolute;background:#fff;border-radius:50%;animation:tw ease-in-out infinite}
 @keyframes tw{0%,100%{opacity:.12;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}}
-.page{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:34px;max-width:600px;margin:0 auto;padding:40px 20px 120px}
-.ttl{font-size:clamp(2.4rem,9vw,4.2rem);font-weight:900;background:linear-gradient(90deg,#ff5ec8,#ffd700,#ff9030,#a97fff,#ff5ec8);background-size:350%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sh 3.5s linear infinite;letter-spacing:2px}
+
+/* ── page layout ── */
+.page{
+  position:relative;z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:38px;
+  max-width:620px;margin:0 auto;padding:44px 20px 140px;
+}
+
+/* ── shimmer title ── */
+.ttl{
+  font-size:clamp(2.4rem,9vw,4.2rem);font-weight:900;
+  background:linear-gradient(90deg,#ff5ec8,#ffd700,#ff9030,#a97fff,#ff5ec8);
+  background-size:350%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:sh 3.5s linear infinite;letter-spacing:2px;
+}
 @keyframes sh{0%{background-position:0%}100%{background-position:350%}}
-.ck{animation:bk 2.4s ease-in-out infinite;filter:drop-shadow(0 10px 25px rgba(243,104,224,.6))}
-@keyframes bk{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
-.gw{cursor:pointer;user-select:none;display:flex;flex-direction:column;align-items:center;position:relative;filter:drop-shadow(0 12px 32px rgba(230,57,70,.55));transition:filter .2s}
-.gw:hover{filter:drop-shadow(0 16px 44px rgba(255,100,210,.75))}
-.pk{position:absolute;border-radius:50%;pointer-events:none;opacity:0;width:14px;height:14px;z-index:20}
-.gw.op .pk{animation:bst .85s ease-out forwards}
+
+/* ═══════════════════════════════════════
+   GIFT BOX  — cake pops out on open
+═══════════════════════════════════════ */
+.gift-scene{
+  position:relative;display:inline-flex;flex-direction:column;
+  align-items:center;cursor:pointer;user-select:none;
+  filter:drop-shadow(0 12px 32px rgba(230,57,70,.55));
+  transition:filter .2s;
+}
+.gift-scene:hover{filter:drop-shadow(0 16px 44px rgba(255,100,210,.75));}
+
+/* sparkle particles */
+.pk{position:absolute;border-radius:50%;pointer-events:none;opacity:0;width:14px;height:14px;z-index:30;}
+.gift-scene.op .pk{animation:bst .85s ease-out forwards;}
 @keyframes bst{0%{opacity:1;transform:translate(0,0) scale(1.3)}100%{opacity:0;transform:var(--tx) scale(.04)}}
-.ld{width:190px;height:52px;background:linear-gradient(135deg,#ff6b6b,#ee1d52);border-radius:8px 8px 0 0;position:relative;box-shadow:0 -5px 22px rgba(238,29,82,.6),inset 0 2px 7px rgba(255,255,255,.22);transition:transform .65s cubic-bezier(.34,1.56,.64,1),opacity .65s;transform-origin:bottom center}
-.ld::after{content:'';position:absolute;top:50%;left:0;transform:translateY(-50%);width:100%;height:22px;background:linear-gradient(90deg,#ffd700,#ffaa00);border-radius:3px}
-.bw{position:absolute;top:-38px;left:50%;transform:translateX(-50%);width:94px;height:52px;z-index:6;transition:transform .65s,opacity .65s}
-.bwl,.bwr{position:absolute;width:42px;height:34px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:linear-gradient(135deg,#ff9ff3,#f368e0);top:0}
-.bwl{left:2px;transform:rotate(-30deg)}
-.bwr{right:2px;transform:rotate(30deg)}
-.bwc{position:absolute;width:22px;height:22px;background:#ff6fd8;border-radius:50%;top:5px;left:50%;transform:translateX(-50%);box-shadow:0 0 14px #ff6fd8}
-.bx{width:176px;height:144px;background:linear-gradient(135deg,#e63946,#b0151f);border-radius:0 0 12px 12px;position:relative;box-shadow:0 14px 44px rgba(230,57,70,.65),inset 0 2px 9px rgba(255,255,255,.15)}
-.bx::after{content:'';position:absolute;top:50%;left:0;transform:translateY(-50%);width:100%;height:27px;background:linear-gradient(90deg,#ffd700,#ffaa00);border-radius:5px}
-.bx::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:27px;height:100%;background:linear-gradient(180deg,#ffd700,#ffaa00);border-radius:5px;z-index:1}
-.gw.op .ld{transform:translateY(-100px) rotate(-28deg);opacity:0}
-.gw.op .bw{transform:translateX(-50%) translateY(-125px) scale(.3);opacity:0}
-.ht{font-size:1.05rem;color:rgba(255,255,255,.78);animation:pl 2s ease-in-out infinite}
+
+/* cake that pops up — hidden until open */
+.cake-popup{
+  position:absolute;
+  bottom:100%;          /* sits just above the lid */
+  left:50%;
+  transform:translateX(-50%) translateY(0) scale(.1);
+  opacity:0;
+  pointer-events:none;
+  z-index:25;
+  filter:drop-shadow(0 8px 22px rgba(243,104,224,.7));
+  transition:none;
+}
+.gift-scene.op .cake-popup{
+  animation:cakePop .7s cubic-bezier(.34,1.56,.64,1) .25s forwards;
+  pointer-events:auto;
+  cursor:pointer;
+}
+@keyframes cakePop{
+  0%  {opacity:1;transform:translateX(-50%) translateY(30px) scale(.1);}
+  60% {opacity:1;transform:translateX(-50%) translateY(-120px) scale(1.15);}
+  80% {transform:translateX(-50%) translateY(-108px) scale(.95);}
+  100%{opacity:1;transform:translateX(-50%) translateY(-115px) scale(1);}
+}
+/* keep cake floating after pop */
+.gift-scene.op .cake-popup.popped{
+  animation:cakePop .7s cubic-bezier(.34,1.56,.64,1) .25s forwards,
+            bob 2.3s ease-in-out 1s infinite;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(-115px) scale(1)}50%{transform:translateX(-50%) translateY(-130px) scale(1)}}
+
+/* lid */
+.ld{
+  width:190px;height:52px;
+  background:linear-gradient(135deg,#ff6b6b,#ee1d52);
+  border-radius:8px 8px 0 0;position:relative;
+  box-shadow:0 -5px 22px rgba(238,29,82,.6),inset 0 2px 7px rgba(255,255,255,.22);
+  transition:transform .65s cubic-bezier(.34,1.56,.64,1),opacity .65s;
+  transform-origin:bottom center;
+}
+.ld::after{
+  content:'';position:absolute;top:50%;left:0;
+  transform:translateY(-50%);width:100%;height:22px;
+  background:linear-gradient(90deg,#ffd700,#ffaa00);border-radius:3px;
+}
+/* bow */
+.bw{position:absolute;top:-38px;left:50%;transform:translateX(-50%);width:94px;height:52px;z-index:6;transition:transform .65s,opacity .65s;}
+.bwl,.bwr{position:absolute;width:42px;height:34px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:linear-gradient(135deg,#ff9ff3,#f368e0);top:0;}
+.bwl{left:2px;transform:rotate(-30deg);}
+.bwr{right:2px;transform:rotate(30deg);}
+.bwc{position:absolute;width:22px;height:22px;background:#ff6fd8;border-radius:50%;top:5px;left:50%;transform:translateX(-50%);box-shadow:0 0 14px #ff6fd8;}
+/* box body */
+.bx{
+  width:190px;height:148px;
+  background:linear-gradient(135deg,#e63946,#b0151f);
+  border-radius:0 0 12px 12px;position:relative;
+  box-shadow:0 14px 44px rgba(230,57,70,.65),inset 0 2px 9px rgba(255,255,255,.15);
+}
+.bx::after{content:'';position:absolute;top:50%;left:0;transform:translateY(-50%);width:100%;height:27px;background:linear-gradient(90deg,#ffd700,#ffaa00);border-radius:5px;}
+.bx::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:27px;height:100%;background:linear-gradient(180deg,#ffd700,#ffaa00);border-radius:5px;z-index:1;}
+/* lid flies off when open */
+.gift-scene.op .ld{transform:translateY(-110px) rotate(-32deg);opacity:0;}
+.gift-scene.op .bw{transform:translateX(-50%) translateY(-140px) scale(.25);opacity:0;}
+
+/* hint text */
+.ht{font-size:1.05rem;color:rgba(255,255,255,.82);animation:pl 2s ease-in-out infinite;}
 @keyframes pl{0%,100%{opacity:.5}50%{opacity:1}}
-.mb{background:linear-gradient(135deg,#00b894,#00cec9);border:none;border-radius:50px;padding:17px 48px;font-size:1.18rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 30px rgba(243,104,224,.55);transition:transform .18s,box-shadow .18s;display:inline-flex;align-items:center;gap:13px}
-.mb:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(243,104,224,.7)}
-.mb:active{transform:translateY(0)}
-.ni{font-size:1.55rem;display:inline-block;animation:wv 1s ease-in-out infinite}
-@keyframes wv{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(15deg)}}
-.np{display:none;align-items:center;gap:11px;color:#ffd700;font-size:.93rem;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.38);border-radius:30px;padding:9px 24px}
-.np.on{display:flex}
-.eq{display:flex;gap:3px;align-items:flex-end;height:22px}
-.eq span{display:block;width:4px;background:#ffd700;border-radius:2px;animation:eq linear infinite}
+
+/* ── music state badge ── */
+.np{display:none;align-items:center;gap:11px;color:#ffd700;font-size:.93rem;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.38);border-radius:30px;padding:9px 24px;}
+.np.on{display:flex;}
+.eq{display:flex;gap:3px;align-items:flex-end;height:22px;}
+.eq span{display:block;width:4px;background:#ffd700;border-radius:2px;animation:eqa linear infinite;}
 .eq span:nth-child(1){height:6px;animation-duration:.5s}
 .eq span:nth-child(2){height:16px;animation-duration:.7s}
 .eq span:nth-child(3){height:11px;animation-duration:.55s}
 .eq span:nth-child(4){height:18px;animation-duration:.8s}
-@keyframes eq{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.2)}}
-.cd{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(18px);border-radius:26px;padding:38px 34px;box-shadow:0 12px 44px rgba(0,0,0,.45);animation:rs 1.5s ease both;width:100%}
-@keyframes rs{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-.cd h2{font-size:clamp(1.3rem,4vw,2rem);background:linear-gradient(90deg,#ffd700,#ff6fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}
-.cd p{font-size:1.08rem;line-height:1.95;color:rgba(255,255,255,.91)}
-.em{font-size:2.1rem;margin-top:20px;letter-spacing:11px;animation:sp 2.2s ease-in-out infinite}
-@keyframes sp{0%,100%{letter-spacing:11px}50%{letter-spacing:18px}}
-/* Send button */
-.send-btn{background:linear-gradient(135deg,#00b894,#00cec9);border:none;border-radius:50px;padding:15px 40px;font-size:1.1rem;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 6px 28px rgba(0,184,148,.5);transition:transform .18s,box-shadow .18s;display:inline-flex;align-items:center;gap:10px}
-.send-btn:hover{transform:translateY(-4px);box-shadow:0 10px 36px rgba(0,184,148,.7)}
-.send-btn:active{transform:translateY(0)}
-/* Audio player */
-.audio-wrap{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(12px);border-radius:50px;padding:10px 24px;display:flex;align-items:center;gap:12px}
-audio{border-radius:40px;height:38px}
-@media(max-width:440px){.ld,.bx{width:90vw;max-width:190px}}
+@keyframes eqa{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.2)}}
+
+/* ── play/pause button ── */
+.mb{
+  background:linear-gradient(135deg,#6c5ce7,#a29bfe);
+  border:none;border-radius:50px;padding:17px 48px;
+  font-size:1.18rem;font-weight:700;color:#fff;cursor:pointer;
+  box-shadow:0 6px 30px rgba(108,92,231,.55);
+  transition:transform .18s,box-shadow .18s;
+  display:inline-flex;align-items:center;gap:13px;
+}
+.mb:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(108,92,231,.7);}
+.mb:active{transform:translateY(0);}
+.ni{font-size:1.55rem;display:inline-block;animation:wv 1s ease-in-out infinite;}
+@keyframes wv{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(15deg)}}
+
+/* ── wish card ── */
+.cd{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(22px);
+  border-radius:26px;padding:40px 36px;
+  box-shadow:0 12px 44px rgba(0,0,0,.5);
+  width:100%;
+  scroll-margin-top:40px;   /* offset for smooth-scroll */
+}
+.cd h2{
+  font-size:clamp(1.4rem,4vw,2.1rem);
+  background:linear-gradient(90deg,#ffd700,#ff6fd8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:18px;
+}
+.cd p{font-size:1.1rem;line-height:2;color:rgba(255,255,255,.93);}
+.em{font-size:2.1rem;margin-top:22px;letter-spacing:11px;animation:sp 2.2s ease-in-out infinite;}
+@keyframes sp{0%,100%{letter-spacing:11px}50%{letter-spacing:20px;}}
+
+/* ── send button ── */
+.send-btn{
+  background:linear-gradient(135deg,#00b894,#00cec9);
+  border:none;border-radius:50px;padding:15px 42px;
+  font-size:1.1rem;font-weight:700;color:#fff;cursor:pointer;text-decoration:none;
+  box-shadow:0 6px 28px rgba(0,184,148,.5);
+  transition:transform .18s,box-shadow .18s;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.send-btn:hover{transform:translateY(-4px);box-shadow:0 10px 36px rgba(0,184,148,.7);}
+.send-btn:active{transform:translateY(0);}
+
+@media(max-width:440px){.ld,.bx{width:88vw;max-width:190px}}
 </style>
 </head>
 <body>
+
 <div id="sr"></div>
 <canvas id="cv"></canvas>
 <div id="bl"></div>
 
+<!-- ══ RANG LAGEYA audio (hidden, autoplay on gift open) ══ -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="Rang%20Lageya%20-%20Official%20Video%20%20%20Paras%20Chhabra%20%20%20Mahira%20Sharma%20%20%20Mohit%20Chauhan%20%20%20Rochak%20Kohli%20%20%20Kumaar.m4a" type="audio/mp4">
+</audio>
+
 <div class="page">
-  <h1 class="ttl">&#127881; Happy Birthday! &#127881;</h1>
 
-  <!-- Animated Cake SVG -->
-  <div class="ck">
-    <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="38" y="22" width="11" height="28" rx="4" fill="#f8d7da"/>
-      <rect x="69" y="11" width="11" height="35" rx="4" fill="#cfe2ff"/>
-      <rect x="100" y="22" width="11" height="28" rx="4" fill="#d1e7dd"/>
-      <ellipse cx="43" cy="17" rx="6.5" ry="10" fill="#ffd700" opacity=".93">
-        <animate attributeName="ry" values="10;6;10" dur=".6s" repeatCount="indefinite"/>
-        <animate attributeName="fill" values="#ffd700;#ff9f43;#ffd700" dur=".6s" repeatCount="indefinite"/>
-      </ellipse>
-      <ellipse cx="74" cy="7" rx="6.5" ry="10" fill="#ff9f43" opacity=".93">
-        <animate attributeName="ry" values="10;5;10" dur=".8s" repeatCount="indefinite"/>
-        <animate attributeName="fill" values="#ff9f43;#ffd700;#ff9f43" dur=".8s" repeatCount="indefinite"/>
-      </ellipse>
-      <ellipse cx="105" cy="17" rx="6.5" ry="10" fill="#ffd700" opacity=".93">
-        <animate attributeName="ry" values="10;6;10" dur=".7s" repeatCount="indefinite"/>
-        <animate attributeName="fill" values="#ffd700;#ff6b6b;#ffd700" dur=".7s" repeatCount="indefinite"/>
-      </ellipse>
-      <rect x="14" y="50" width="122" height="40" rx="9" fill="#f368e0"/>
-      <rect x="14" y="50" width="122" height="15" rx="9" fill="#ff9ff3"/>
-      <path d="M14 65 Q25 80 38 65 Q51 80 64 65 Q77 80 90 65 Q103 80 116 65 Q127 80 136 65 L136 90 Q116 85 90 90 Q64 85 38 90 Q14 85 14 90 Z" fill="#ff6fd8" opacity=".68"/>
-      <rect x="22" y="90" width="106" height="36" rx="9" fill="#e63946"/>
-      <rect x="22" y="90" width="106" height="13" rx="9" fill="#ff6b6b"/>
-      <circle cx="48" cy="78" r="6.5" fill="#ffd700"/>
-      <circle cx="75" cy="74" r="6.5" fill="#fff"/>
-      <circle cx="102" cy="78" r="6.5" fill="#ffd700"/>
-      <circle cx="62" cy="105" r="5.5" fill="#fff" opacity=".78"/>
-      <circle cx="88" cy="105" r="5.5" fill="#ffd700" opacity=".9"/>
-    </svg>
-  </div>
+  <!-- Title -->
+  <h1 class="ttl">🎉 Happy Birthday! 🎉</h1>
 
-  <!-- Gift Box -->
-  <div class="gw" id="gift" onclick="openGift()" title="Click to open your gift!">
-    <div class="pk" style="top:45%;left:50%;--tx:translate(-95px,-95px);background:#ffd700"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(95px,-95px);background:#ff6fd8"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(-80px,70px);background:#a29bfe"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(80px,70px);background:#55efc4"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(0,-115px);background:#fdcb6e"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(-120px,5px);background:#74b9ff"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(120px,5px);background:#fd79a8"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(-60px,-110px);background:#fff"></div>
-    <div class="pk" style="top:45%;left:50%;--tx:translate(60px,-110px);background:#ffd700"></div>
-    <div class="ld">
-      <div class="bw"><div class="bwl"></div><div class="bwr"></div><div class="bwc"></div></div>
+  <!-- Gift Box — click to open; cake pops out -->
+  <div class="gift-scene" id="gift" onclick="openGift()" title="Click the gift to open!">
+
+    <!-- sparkle particles -->
+    <div class="pk" style="top:50%;left:50%;--tx:translate(-95px,-95px);background:#ffd700"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(95px,-95px);background:#ff6fd8"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(-80px,70px);background:#a29bfe"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(80px,70px);background:#55efc4"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(0,-115px);background:#fdcb6e"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(-120px,5px);background:#74b9ff"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(120px,5px);background:#fd79a8"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(-60px,-110px);background:#fff"></div>
+    <div class="pk" style="top:50%;left:50%;--tx:translate(60px,-110px);background:#ffd700"></div>
+
+    <!-- Cake that pops out (clicking it scrolls to wish card) -->
+    <div class="cake-popup" id="cakePopup" onclick="scrollToWish(event)" title="Click cake to see your wish!">
+      <svg width="130" height="130" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="38" y="22" width="11" height="28" rx="4" fill="#f8d7da"/>
+        <rect x="69" y="11" width="11" height="35" rx="4" fill="#cfe2ff"/>
+        <rect x="100" y="22" width="11" height="28" rx="4" fill="#d1e7dd"/>
+        <ellipse cx="43" cy="17" rx="6.5" ry="10" fill="#ffd700" opacity=".93">
+          <animate attributeName="ry" values="10;6;10" dur=".6s" repeatCount="indefinite"/>
+          <animate attributeName="fill" values="#ffd700;#ff9f43;#ffd700" dur=".6s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="74" cy="7" rx="6.5" ry="10" fill="#ff9f43" opacity=".93">
+          <animate attributeName="ry" values="10;5;10" dur=".8s" repeatCount="indefinite"/>
+          <animate attributeName="fill" values="#ff9f43;#ffd700;#ff9f43" dur=".8s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="105" cy="17" rx="6.5" ry="10" fill="#ffd700" opacity=".93">
+          <animate attributeName="ry" values="10;6;10" dur=".7s" repeatCount="indefinite"/>
+          <animate attributeName="fill" values="#ffd700;#ff6b6b;#ffd700" dur=".7s" repeatCount="indefinite"/>
+        </ellipse>
+        <rect x="14" y="50" width="122" height="40" rx="9" fill="#f368e0"/>
+        <rect x="14" y="50" width="122" height="15" rx="9" fill="#ff9f3"/>
+        <path d="M14 65 Q25 80 38 65 Q51 80 64 65 Q77 80 90 65 Q103 80 116 65 Q127 80 136 65 L136 90 Q116 85 90 90 Q64 85 38 90 Q14 85 14 90 Z" fill="#ff6fd8" opacity=".68"/>
+        <rect x="22" y="90" width="106" height="36" rx="9" fill="#e63946"/>
+        <rect x="22" y="90" width="106" height="13" rx="9" fill="#ff6b6b"/>
+        <circle cx="48" cy="78" r="6.5" fill="#ffd700"/>
+        <circle cx="75" cy="74" r="6.5" fill="#fff"/>
+        <circle cx="102" cy="78" r="6.5" fill="#ffd700"/>
+        <circle cx="62" cy="105" r="5.5" fill="#fff" opacity=".78"/>
+        <circle cx="88" cy="105" r="5.5" fill="#ffd700" opacity=".9"/>
+      </svg>
+      <span style="font-size:.78rem;color:#ffd700;margin-top:4px;display:block;">Click me! 👆</span>
     </div>
+
+    <!-- Lid (flies off on open) -->
+    <div class="ld">
+      <div class="bw">
+        <div class="bwl"></div>
+        <div class="bwr"></div>
+        <div class="bwc"></div>
+      </div>
+    </div>
+    <!-- Box body -->
     <div class="bx"></div>
   </div>
 
-  <p class="ht" id="hint">&#127873; Click the gift to open &amp; start the music!</p>
+  <p class="ht" id="hint">🎁 Click the gift to open &amp; play the music!</p>
 
-  <!-- Web Audio music button -->
+  <!-- Music controls -->
   <button class="mb" id="mbtn" onclick="toggleMusic()">
-    <span class="ni">&#127925;</span> Play Birthday Song
+    <span class="ni">🎵</span> Play Rang Lageya
   </button>
 
   <div class="np" id="np">
     <div class="eq"><span></span><span></span><span></span><span></span></div>
-    Now Playing &middot; Happy Birthday &#127874;
+    Now Playing · Rang Lageya 🎶
   </div>
 
-  <!-- Original audio from branch (Rang Lageya) -->
-  <div class="audio-wrap">
-    <span>&#127925;</span>
-    <audio controls>
-      <source src="Rang Lageya - Official Video   Paras Chhabra   Mahira Sharma   Mohit Chauhan   Rochak Kohli   Kumaar.m4a" type="audio/m4a">
-      Your browser does not support the audio element.
-    </audio>
-  </div>
-
-  <!-- Send Birthday Wish button (from original branch) -->
+  <!-- Send button -->
   <a class="send-btn" href="mailto:ankeetasati@gmail.com?body=Check%20out%20this%20birthday%20wish%20for%20you!">
-    &#127881; Send Birthday Wish
+    🎉 Send Birthday Wish
   </a>
 
-  <!-- Wish Card -->
-  <div class="cd">
-    <h2>&#127775; A Special Wish For You &#127775;</h2>
+  <!-- Wish Card — scrolled-to when cake is clicked -->
+  <div class="cd" id="wishCard">
+    <h2>🌟 A Special Wish For You 🌟</h2>
     <p>
       May this birthday bring you endless smiles,<br>
       laughter that echoes through the miles.<br>
       May your dreams bloom like flowers in spring,<br>
       and your heart dance to every beautiful thing.<br><br>
-      <strong>Happy Birthday! &#127874;</strong><br>
+      <strong>Happy Birthday! 🎂</strong><br>
       Wishing you a fantastic birthday filled with joy and happiness!
     </p>
-    <div class="em">&#127880; &#127873; &#127874; &#127856; &#129395;</div>
+    <div class="em">🎀 🎁 🎂 🍰 🥳</div>
   </div>
-</div>
+
+</div><!-- .page -->
 
 <script>
-// STARS
+/* ── STARS ── */
 (function(){
   var c=document.getElementById('sr');
-  for(var i=0;i<110;i++){
+  for(var i=0;i<100;i++){
     var s=document.createElement('div');s.className='s';
-    var sz=Math.random()*4+.5;
+    var sz=Math.random()*3.5+.5;
     s.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+(Math.random()*100)+'vh;left:'+(Math.random()*100)+'vw;animation-duration:'+(Math.random()*3+1.5)+'s;animation-delay:'+(Math.random()*6)+'s';
     c.appendChild(s);
   }
 })();
-// BALLOONS
+
+/* ── BALLOONS ── */
 (function(){
   var C=['#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fd79a8','#fdcb6e'];
   var c=document.getElementById('bl');
@@ -207,17 +327,22 @@ audio{border-radius:40px;height:38px}
     c.appendChild(b);
   }
 })();
-// CONFETTI
+
+/* ── CONFETTI ── */
 var cv=document.getElementById('cv');
 var cx=cv.getContext('2d');
-function rsz(){cv.width=window.innerWidth;cv.height=window.innerHeight}
+function rsz(){cv.width=window.innerWidth;cv.height=window.innerHeight;}
 rsz();window.addEventListener('resize',rsz);
 var CC=['#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fdcb6e','#fd79a8','#fff','#ff9f43'];
 var P=[];
-for(var i=0;i<120;i++){P.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight-window.innerHeight,r:Math.random()*10+3,d:Math.random()*110+10,c:CC[Math.floor(Math.random()*CC.length)],ta:0,ts:.04+Math.random()*.15});}
+for(var i=0;i<120;i++){
+  P.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight-window.innerHeight,
+          r:Math.random()*10+3,d:Math.random()*110+10,c:CC[Math.floor(Math.random()*CC.length)],ta:0,ts:.04+Math.random()*.15});
+}
 var ang=0;
 (function loop(){
-  cx.clearRect(0,0,cv.width,cv.height);ang+=.01;
+  cx.clearRect(0,0,cv.width,cv.height);
+  ang+=.01;
   for(var i=0;i<P.length;i++){
     var p=P[i];
     p.ta+=p.ts;p.y+=(Math.cos(ang+p.d)+1.8);p.x+=Math.sin(ang)*.98;
@@ -228,51 +353,53 @@ var ang=0;
   }
   requestAnimationFrame(loop);
 })();
-// GIFT
+
+/* ── GIFT OPEN ── */
 var opened=false;
 function openGift(){
-  if(opened)return;opened=true;
-  document.getElementById('gift').classList.add('op');
-  document.getElementById('hint').textContent='Music is playing! Use the button below to pause or play again.';
-  startMusic();
+  if(opened)return;
+  opened=true;
+  var g=document.getElementById('gift');
+  g.removeAttribute('onclick');         // prevent double-trigger
+  g.style.cursor='default';
+  g.classList.add('op');
+  // add bobbing class after pop animation finishes
+  setTimeout(function(){
+    var cake=document.getElementById('cakePopup');
+    cake.classList.add('popped');
+  },1100);
+  document.getElementById('hint').textContent='🎂 Click the cake to see your birthday wish!';
+  // start Rang Lageya
+  var aud=document.getElementById('bgMusic');
+  aud.play().then(function(){
+    document.getElementById('mbtn').innerHTML='<span class="ni">🎵</span> Pause Rang Lageya';
+    document.getElementById('np').classList.add('on');
+  }).catch(function(){
+    // autoplay blocked — user must press button
+  });
 }
-// MUSIC — Web Audio API Happy Birthday melody
-var actx=null,playing=false,nodes=[],tmr=null;
-var BPM=108,BEAT=60/BPM;
-var SONG=[[392,.75],[392,.25],[440,1],[392,1],[523,1],[494,2],[392,.75],[392,.25],[440,1],[392,1],[587,1],[523,2],[392,.75],[392,.25],[784,1],[659,1],[523,1],[494,1],[440,2],[698,.75],[698,.25],[659,1],[523,1],[587,1],[523,2]];
-function playNote(f,t,d){
-  if(!f)return;
-  var o=actx.createOscillator(),g=actx.createGain();
-  o.connect(g);g.connect(actx.destination);
-  o.type='triangle';o.frequency.setValueAtTime(f,t);
-  g.gain.setValueAtTime(0,t);
-  g.gain.linearRampToValueAtTime(.32,t+.025);
-  g.gain.setValueAtTime(.32,t+d*BEAT-.065);
-  g.gain.linearRampToValueAtTime(0,t+d*BEAT);
-  o.start(t);o.stop(t+d*BEAT+.025);
-  nodes.push(o);
+
+/* ── CAKE CLICK → scroll to wish ── */
+function scrollToWish(e){
+  e.stopPropagation();   // don't re-trigger gift open
+  document.getElementById('wishCard').scrollIntoView({behavior:'smooth',block:'center'});
 }
-function schedSong(start){
-  var t=start;
-  for(var i=0;i<SONG.length;i++){playNote(SONG[i][0],t,SONG[i][1]);t+=SONG[i][1]*BEAT;}
-  return t-start;
+
+/* ── MUSIC TOGGLE ── */
+function toggleMusic(){
+  var aud=document.getElementById('bgMusic');
+  var btn=document.getElementById('mbtn');
+  var np=document.getElementById('np');
+  if(aud.paused){
+    aud.play();
+    btn.innerHTML='<span class="ni">🎵</span> Pause Rang Lageya';
+    np.classList.add('on');
+  } else {
+    aud.pause();
+    btn.innerHTML='<span class="ni">🎵</span> Play Rang Lageya';
+    np.classList.remove('on');
+  }
 }
-function startMusic(){
-  if(playing)return;
-  if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
-  if(actx.state==='suspended')actx.resume();
-  playing=true;
-  document.getElementById('mbtn').innerHTML='<span class="ni">&#127925;</span> Pause Song';
-  document.getElementById('np').classList.add('on');
-  (function loop(){if(!playing)return;var d=schedSong(actx.currentTime+.05);tmr=setTimeout(loop,(d+.4)*1000);})();
-}
-function stopMusic(){
-  playing=false;clearTimeout(tmr);
-  for(var i=0;i<nodes.length;i++){try{nodes[i].stop();}catch(e){}}nodes=[];
-  document.getElementById('mbtn').innerHTML='<span class="ni">&#127925;</span> Play Birthday Song';
-  document.getElementById('np').classList.remove('on');
-}
-function toggleMusic(){playing?stopMusic():startMusic();}
 </script>
 </body>
 </html>
