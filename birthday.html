@@ -1,33 +1,661 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Wishes</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0e68c;
-            color: #3c3c3c;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #d9534f;
-        }
-        p {
-            font-size: 1.2em;
-        }
-        .balloons {
-            background-image: url('balloon.png');
-            background-size: cover;
-            height: 300px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday! 🎂</title>
+  <style>
+    /* ---------- Reset & Base ---------- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a0533 0%, #3b0764 50%, #1a0533 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 30px 20px 60px;
+      color: #fff;
+    }
+
+    /* ---------- Confetti Canvas ---------- */
+    #confetti-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ---------- Floating Balloons ---------- */
+    .balloon-container {
+      position: fixed;
+      bottom: -120px;
+      width: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .balloon {
+      position: absolute;
+      bottom: 0;
+      width: 60px;
+      height: 80px;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: floatUp linear infinite;
+      opacity: 0.9;
+    }
+    .balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.5);
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(-5deg); opacity: 0.9; }
+      50%  { transform: translateY(-50vh) rotate(5deg); opacity: 0.8; }
+      100% { transform: translateY(-110vh) rotate(-3deg); opacity: 0; }
+    }
+
+    /* ---------- Stars ---------- */
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.4); }
+    }
+
+    /* ---------- Content Wrapper ---------- */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* ---------- Title ---------- */
+    .title {
+      font-size: clamp(2rem, 7vw, 3.5rem);
+      font-weight: 900;
+      background: linear-gradient(90deg, #ff6fd8, #ffd700, #ff6fd8);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+      text-shadow: none;
+      letter-spacing: 1px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* ---------- Gift Box ---------- */
+    .gift-wrapper {
+      cursor: pointer;
+      position: relative;
+      width: 160px;
+      height: 200px;
+      transition: transform 0.2s;
+      user-select: none;
+    }
+    .gift-wrapper:hover { transform: scale(1.07) rotate(-2deg); }
+    .gift-wrapper:active { transform: scale(0.97); }
+
+    .gift-box {
+      width: 160px;
+      height: 130px;
+      background: linear-gradient(135deg, #e63946, #c1121f);
+      border-radius: 10px;
+      position: absolute;
+      bottom: 0;
+      box-shadow: 0 8px 32px rgba(230,57,70,0.5), inset 0 2px 8px rgba(255,255,255,0.15);
+    }
+    .gift-box::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 100%;
+      height: 22px;
+      background: linear-gradient(90deg, #ffd700, #ffaa00);
+      border-radius: 4px;
+    }
+    .gift-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 100%;
+      background: linear-gradient(180deg, #ffd700, #ffaa00);
+      border-radius: 4px;
+      z-index: 1;
+    }
+
+    /* Lid */
+    .gift-lid {
+      width: 175px;
+      height: 45px;
+      background: linear-gradient(135deg, #ff6b6b, #ee1d52);
+      border-radius: 8px;
+      position: absolute;
+      top: 58px;
+      left: -8px;
+      box-shadow: 0 4px 18px rgba(238,29,82,0.4), inset 0 2px 6px rgba(255,255,255,0.15);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s;
+      transform-origin: bottom center;
+    }
+    .gift-lid::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 100%;
+      height: 20px;
+      background: linear-gradient(90deg, #ffd700, #ffaa00);
+      border-radius: 4px;
+    }
+    .gift-wrapper.opened .gift-lid {
+      transform: translateY(-80px) rotate(-20deg);
+      opacity: 0;
+    }
+
+    /* Bow */
+    .bow {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 44px;
+      z-index: 5;
+      transition: transform 0.5s, opacity 0.5s;
+    }
+    .bow-left, .bow-right {
+      position: absolute;
+      width: 36px;
+      height: 28px;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: linear-gradient(135deg, #ff9ff3, #f368e0);
+      top: 0;
+    }
+    .bow-left  { left: 2px;  transform: rotate(-30deg); }
+    .bow-right { right: 2px; transform: rotate(30deg); }
+    .bow-center {
+      position: absolute;
+      width: 16px; height: 16px;
+      background: #ff6fd8;
+      border-radius: 50%;
+      top: 4px; left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 8px #ff6fd8;
+    }
+    .gift-wrapper.opened .bow {
+      transform: translateX(-50%) translateY(-90px) scale(0.5);
+      opacity: 0;
+    }
+
+    /* Sparkles burst on open */
+    .sparkle {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .gift-wrapper.opened .sparkle {
+      animation: burst 0.7s ease-out forwards;
+    }
+    @keyframes burst {
+      0%   { opacity: 1; transform: translate(0,0) scale(1); }
+      100% { opacity: 0; transform: var(--tx) scale(0.2); }
+    }
+
+    /* ---------- Gift Hint ---------- */
+    .gift-hint {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.5px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; } 50% { opacity: 1; }
+    }
+
+    /* ---------- Music Button ---------- */
+    .music-btn {
+      background: linear-gradient(135deg, #f368e0, #a29bfe);
+      border: none;
+      border-radius: 50px;
+      padding: 14px 36px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(243,104,224,0.45);
+      transition: transform 0.18s, box-shadow 0.18s;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .music-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(243,104,224,0.6);
+    }
+    .music-btn:active { transform: translateY(0); }
+    .music-btn .note { font-size: 1.4rem; animation: noteWave 1s ease-in-out infinite; }
+    @keyframes noteWave {
+      0%, 100% { transform: rotate(-10deg); }
+      50%       { transform: rotate(10deg); }
+    }
+
+    /* ---------- Wish Card ---------- */
+    .wish-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 32px 28px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      animation: fadeInUp 1s ease both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .wish-card h2 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      background: linear-gradient(90deg, #ffd700, #ff6fd8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+    }
+    .wish-card p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.88);
+    }
+    .emoji-row {
+      font-size: 1.8rem;
+      margin-top: 16px;
+      letter-spacing: 6px;
+      animation: sway 2s ease-in-out infinite;
+    }
+    @keyframes sway {
+      0%, 100% { letter-spacing: 6px; }
+      50%       { letter-spacing: 10px; }
+    }
+
+    /* ---------- Now Playing Badge ---------- */
+    .now-playing {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #ffd700;
+      background: rgba(255,215,0,0.12);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 30px;
+      padding: 6px 18px;
+    }
+    .now-playing.visible { display: flex; }
+    .bar-eq {
+      display: flex;
+      gap: 3px;
+      align-items: flex-end;
+      height: 18px;
+    }
+    .bar-eq span {
+      display: block;
+      width: 4px;
+      background: #ffd700;
+      border-radius: 2px;
+      animation: eq linear infinite;
+    }
+    .bar-eq span:nth-child(1) { height: 6px;  animation-duration: 0.5s; }
+    .bar-eq span:nth-child(2) { height: 14px; animation-duration: 0.7s; }
+    .bar-eq span:nth-child(3) { height: 10px; animation-duration: 0.6s; }
+    .bar-eq span:nth-child(4) { height: 16px; animation-duration: 0.8s; }
+    @keyframes eq {
+      0%, 100% { transform: scaleY(1); }
+      50%       { transform: scaleY(0.3); }
+    }
+
+    /* ---------- Cake ---------- */
+    .cake-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+    .cake-svg { width: 120px; height: 120px; }
+  </style>
 </head>
 <body>
-    <div class="balloons"></div>
-    <h1>Happy Birthday!</h1>
-    <p>Wishing you a day filled with love, joy, and happiness!</p>
+
+<!-- Stars background -->
+<div class="stars" id="stars"></div>
+<!-- Confetti -->
+<canvas id="confetti-canvas"></canvas>
+<!-- Balloons -->
+<div class="balloon-container" id="balloons"></div>
+
+<!-- Hidden audio (uses a public domain birthday MIDI via web audio API) -->
+<audio id="birthday-audio" loop>
+  <!-- We'll generate the melody via Web Audio API as no file is hosted -->
+</audio>
+
+<div class="content">
+
+  <!-- Title -->
+  <h1 class="title">🎉 Happy Birthday! 🎉</h1>
+
+  <!-- Cake -->
+  <div class="cake-wrapper">
+    <svg class="cake-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Candles -->
+      <rect x="30" y="22" width="8" height="22" rx="3" fill="#f8d7da"/>
+      <rect x="56" y="14" width="8" height="28" rx="3" fill="#cfe2ff"/>
+      <rect x="82" y="22" width="8" height="22" rx="3" fill="#d1e7dd"/>
+      <!-- Flames -->
+      <ellipse cx="34" cy="18" rx="5" ry="7" fill="#ffd700" opacity="0.9">
+        <animate attributeName="ry" values="7;5;7" dur="0.6s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="60" cy="10" rx="5" ry="7" fill="#ff9f43" opacity="0.9">
+        <animate attributeName="ry" values="7;4;7" dur="0.8s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="86" cy="18" rx="5" ry="7" fill="#ffd700" opacity="0.9">
+        <animate attributeName="ry" values="7;5;7" dur="0.7s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Cake layers -->
+      <rect x="12" y="44" width="96" height="34" rx="6" fill="#f368e0"/>
+      <rect x="12" y="44" width="96" height="12" rx="6" fill="#ff9ff3"/>
+      <!-- Frosting drips -->
+      <path d="M12 56 Q20 68 30 56 Q40 68 50 56 Q60 68 70 56 Q80 68 90 56 Q100 68 108 56 L108 78 Q100 74 90 78 Q80 74 70 78 Q60 74 50 78 Q40 74 30 78 Q20 74 12 78 Z" fill="#ff6fd8" opacity="0.6"/>
+      <rect x="20" y="78" width="80" height="28" rx="6" fill="#e63946"/>
+      <rect x="20" y="78" width="80" height="10" rx="6" fill="#ff6b6b"/>
+      <!-- Decorations -->
+      <circle cx="40" cy="68" r="5" fill="#ffd700"/>
+      <circle cx="60" cy="64" r="5" fill="#fff"/>
+      <circle cx="80" cy="68" r="5" fill="#ffd700"/>
+      <circle cx="50" cy="88" r="4" fill="#fff" opacity="0.7"/>
+      <circle cx="70" cy="88" r="4" fill="#ffd700" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- Gift Box -->
+  <div class="gift-wrapper" id="giftBox" onclick="openGift()" title="Click to open your gift!">
+    <!-- Sparkles -->
+    <div class="sparkle" style="top:50%;left:50%;background:#ffd700;--tx:translate(-70px,-70px)"></div>
+    <div class="sparkle" style="top:50%;left:50%;background:#ff6fd8;--tx:translate(70px,-70px)"></div>
+    <div class="sparkle" style="top:50%;left:50%;background:#a29bfe;--tx:translate(-60px,50px)"></div>
+    <div class="sparkle" style="top:50%;left:50%;background:#55efc4;--tx:translate(60px,50px)"></div>
+    <div class="sparkle" style="top:50%;left:50%;background:#ffd700;--tx:translate(0,-90px)"></div>
+    <!-- Bow -->
+    <div class="bow">
+      <div class="bow-left"></div>
+      <div class="bow-right"></div>
+      <div class="bow-center"></div>
+    </div>
+    <!-- Lid -->
+    <div class="gift-lid"></div>
+    <!-- Box -->
+    <div class="gift-box"></div>
+  </div>
+
+  <p class="gift-hint" id="giftHint">🎁 Click the gift to open it!</p>
+
+  <!-- Music Button -->
+  <button class="music-btn" id="musicBtn" onclick="toggleMusic()">
+    <span class="note">🎵</span> Play Birthday Song
+  </button>
+
+  <!-- Now Playing Badge -->
+  <div class="now-playing" id="nowPlaying">
+    <div class="bar-eq"><span></span><span></span><span></span><span></span></div>
+    Now Playing: Birthday Song 🎂
+  </div>
+
+  <!-- Wish Card -->
+  <div class="wish-card">
+    <h2>🌟 A Special Wish For You 🌟</h2>
+    <p>
+      May this birthday bring you endless smiles,<br/>
+      laughter that echoes through the miles.<br/>
+      May your dreams bloom like flowers in spring,<br/>
+      and your heart dance to every beautiful thing.<br/><br/>
+      <strong>Happy Birthday! 🎂</strong><br/>
+      Wishing you a day filled with love, joy, and happiness!
+    </p>
+    <div class="emoji-row">🎈 🎁 🎂 🍰 🥳</div>
+  </div>
+
+</div>
+
+<!-- Balloon Container (populated by JS) -->
+
+<script>
+  /* ============================================================
+     STARS
+  ============================================================ */
+  (function createStars() {
+    const container = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 3 + 1;
+      s.style.cssText = `
+        width:${size}px; height:${size}px;
+        top:${Math.random()*100}vh; left:${Math.random()*100}vw;
+        animation-duration:${Math.random()*3+1.5}s;
+        animation-delay:${Math.random()*3}s;
+      `;
+      container.appendChild(s);
+    }
+  })();
+
+  /* ============================================================
+     BALLOONS
+  ============================================================ */
+  const balloonColors = [
+    '#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fd79a8','#fdcb6e'
+  ];
+  (function createBalloons() {
+    const container = document.getElementById('balloons');
+    for (let i = 0; i < 12; i++) {
+      const b = document.createElement('div');
+      b.className = 'balloon';
+      const color = balloonColors[i % balloonColors.length];
+      const delay = Math.random() * 8;
+      const duration = 6 + Math.random() * 6;
+      b.style.cssText = `
+        left:${Math.random()*95}%;
+        background:${color};
+        animation-duration:${duration}s;
+        animation-delay:${delay}s;
+        width:${50+Math.random()*30}px;
+        height:${65+Math.random()*30}px;
+        box-shadow:0 0 12px ${color}88;
+      `;
+      container.appendChild(b);
+    }
+  })();
+
+  /* ============================================================
+     CONFETTI
+  ============================================================ */
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  window.addEventListener('resize', () => {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  const confettiColors = ['#ff6fd8','#ffd700','#a29bfe','#55efc4','#ff7675','#74b9ff','#fdcb6e'];
+  const pieces = Array.from({length: 80}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    r: Math.random() * 7 + 4,
+    d: Math.random() * 80 + 20,
+    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+    tilt: Math.random() * 10 - 10,
+    tiltAngle: 0,
+    tiltSpeed: Math.random() * 0.1 + 0.05
+  }));
+
+  let angle = 0;
+  function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    angle += 0.01;
+    pieces.forEach(p => {
+      p.tiltAngle += p.tiltSpeed;
+      p.y += (Math.cos(angle + p.d) + 1.5);
+      p.x += Math.sin(angle) * 0.8;
+      p.tilt = Math.sin(p.tiltAngle) * 12;
+      if (p.y > canvas.height + 10) {
+        p.y = -10; p.x = Math.random() * canvas.width;
+      }
+      ctx.beginPath();
+      ctx.lineWidth = p.r;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+      ctx.stroke();
+    });
+    requestAnimationFrame(drawConfetti);
+  }
+  drawConfetti();
+
+  /* ============================================================
+     GIFT OPEN
+  ============================================================ */
+  let giftOpened = false;
+  function openGift() {
+    if (giftOpened) return;
+    giftOpened = true;
+    document.getElementById('giftBox').classList.add('opened');
+    document.getElementById('giftHint').textContent = '🎶 Click the button below to play music!';
+    // Auto-play music on gift open
+    startMusic();
+  }
+
+  /* ============================================================
+     BIRTHDAY MUSIC (Web Audio API — Happy Birthday melody)
+  ============================================================ */
+  let audioCtx = null;
+  let musicPlaying = false;
+  let musicNodes = [];
+  let musicTimeout = null;
+
+  // Happy Birthday To You — note frequencies & durations
+  // Format: [frequency_hz, duration_beats]  (0 = rest)
+  const BPM = 110;
+  const BEAT = 60 / BPM; // seconds per beat
+
+  const notes = [
+    // "Happy Birthday to you"
+    [392,0.75],[392,0.25],[440,1],[392,1],[523,1],[494,2],
+    // "Happy Birthday to you"
+    [392,0.75],[392,0.25],[440,1],[392,1],[587,1],[523,2],
+    // "Happy Birthday dear [name]"
+    [392,0.75],[392,0.25],[784,1],[659,1],[523,1],[494,1],[440,2],
+    // "Happy Birthday to you"
+    [698,0.75],[698,0.25],[659,1],[523,1],[587,1],[523,2]
+  ];
+
+  function playNote(ctx, freq, startTime, duration) {
+    if (freq === 0) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, startTime);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.28, startTime + 0.02);
+    gain.gain.setValueAtTime(0.28, startTime + duration * BEAT - 0.05);
+    gain.gain.linearRampToValueAtTime(0, startTime + duration * BEAT);
+    osc.start(startTime);
+    osc.stop(startTime + duration * BEAT + 0.01);
+    musicNodes.push(osc);
+    return osc;
+  }
+
+  function scheduleMelody(ctx, startTime) {
+    let t = startTime;
+    notes.forEach(([freq, dur]) => {
+      playNote(ctx, freq, t, dur);
+      t += dur * BEAT;
+    });
+    return t - startTime; // total duration
+  }
+
+  function startMusic() {
+    if (musicPlaying) return;
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    musicPlaying = true;
+
+    const btn = document.getElementById('musicBtn');
+    btn.innerHTML = '<span class="note">🎵</span> Pause Birthday Song';
+    document.getElementById('nowPlaying').classList.add('visible');
+
+    function playLoop() {
+      if (!musicPlaying) return;
+      const totalDur = scheduleMelody(audioCtx, audioCtx.currentTime + 0.05);
+      musicTimeout = setTimeout(playLoop, (totalDur + 0.3) * 1000);
+    }
+    playLoop();
+  }
+
+  function stopMusic() {
+    musicPlaying = false;
+    clearTimeout(musicTimeout);
+    musicNodes.forEach(n => { try { n.stop(); } catch(e){} });
+    musicNodes = [];
+    const btn = document.getElementById('musicBtn');
+    btn.innerHTML = '<span class="note">🎵</span> Play Birthday Song';
+    document.getElementById('nowPlaying').classList.remove('visible');
+  }
+
+  function toggleMusic() {
+    if (musicPlaying) { stopMusic(); } else { startMusic(); }
+  }
+</script>
 </body>
 </html>
